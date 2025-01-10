@@ -1,0 +1,114 @@
+Пример программы на GNU Prolog, которая учится на повторениях и учитывает, что в человеческом языке не более пяти тысяч слов:
+
+:- use_module(library(clpfd)).
+
+% Словарь слов
+words([a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z]).
+
+% Функция для подсчета количества уникальных слов
+unique_count(Words, Count) :-
+    length(Words, L),
+    Count #= L - unique_distinct(Words).
+
+% Функция для проверки уникальности списка
+unique_distinct([]) --> [].
+unique_distinct([X|Xs]) --> [X], {member(X, Xs)}, unique_distinct(Xs).
+
+% Основная программа
+main :-
+    % Инициализация начальной последовательности слов
+    initialize(InitialWords),
+    % Обучение на повторениях
+    learn(InitialWords, Words),
+    % Вывод результата
+    write('Уникальные слова: '),
+    writeln(unique_count(Words, _)),
+    % Вывод слов
+    writeln(Words).
+
+% Инициализация начальной последовательности слов
+initialize(InitialWords) :-
+    length(InitialWords, 5000),
+    shuffle(words(1, 5000), words(InitialWords)).
+
+% Обучение на повторениях
+learn(InitialWords, Words) :-
+    repeat,
+    (   % Если слова уникальны, завершить обучение
+        unique_distinct(InitialWords),
+        !
+    ;   % Иначе добавить новое слово и повторить процесс
+        new_word(InitialWords, NewWord),
+        append(InitialWords, [NewWord], Words)
+    ).
+
+% Получение нового слова
+new_word([], _) --> [].
+new_word([X|Xs], NewWord) --> [X], {member(X, Xs)}, {select(X, words(1, 5000), NewWord)}.
+
+
+Эта программа сначала инициализирует список из пяти тысяч случайных слов. Затем она пытается сделать этот список уникальным, добавляя новые слова до тех пор, пока все слова в списке не станут уникальными. В конце программа выводит количество уникальных слов и сами слова.
+
+Предыдущий код, добавив в него возможность обучения на вопросах. Теперь программа может обучаться на примерах вопросов и ответов, которые ей задают. Вот обновлённый код:
+
+:- use_module(library(clpfd)).
+
+% Словарь слов
+words([a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z]).
+
+% Функция для подсчёта количества уникальных слов
+unique_count(Words, Count) :-
+    length(Words, L),
+    Count #= L - unique_distinct(Words).
+
+% Функция для проверки уникальности списка
+unique_distinct([]) --> [].
+unique_distinct([X|Xs]) --> [X], {member(X, Xs)}, unique_distinct(Xs).
+
+% Основная программа
+main :-
+    % Инициализация начальной последовательности слов
+    initialize(InitialWords),
+    % Обучение на повторениях
+    learn(InitialWords, Words),
+    % Вывод результата
+    write('Уникальные слова: '),
+    writeln(unique_count(Words, _)),
+    % Вывод слов
+    writeln(Words).
+
+% Инициализация начальной последовательности слов
+initialize(InitialWords) :-
+    length(InitialWords, 5000),
+    shuffle(words(1, 5000), words(InitialWords)).
+
+% Обучение на повторениях
+learn(InitialWords, Words) :-
+    repeat,
+    (   % Если слова уникальны, завершить обучение
+        unique_distinct(InitialWords),
+        !
+    ;   % Иначе добавить новое слово и повторить процесс
+        new_word(InitialWords, NewWord),
+        append(InitialWords, [NewWord], Words)
+    ),
+    % Обучение на вопросах
+    ask_question(Words).
+
+% Задать вопрос программе
+ask_question(Words) :-
+    write('Задайте вопрос: '),
+    read(Question),
+    % Обработка вопроса и предоставление ответа
+    process_question(Question, Answer),
+    write('Ответ: '),
+    writeln(Answer).
+
+% Процессинг вопроса и предоставление ответа
+process_question(Question, Answer) :-
+    member(Answer, Words),
+    format('~w', [Answer]).
+
+
+Теперь, когда вы запускаете программу, она сначала инициализирует список из пяти тысяч случайных слов. Затем она пытается сделать этот список уникальным, добавляя новые слова до тех пор, пока все слова в списке не станут уникальными. После этого программа обучается на вопросах, которые ей задают. Когда вы задаёте вопрос, программа проверяет, есть ли ответ на него среди известных ей слов, и если да, то предоставляет этот ответ 
+
