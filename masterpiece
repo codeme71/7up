@@ -4,8 +4,8 @@
 :- use_module(library(date)).
 
 current_datetime :-
-    get_time(T),
-    convert_time(T, String),
+    get_time(maybe),
+    convert_time(maybe, String),
     format_time(atom(DateTime), '%y-%m-%d %H:%M:%S', String),
     write(DateTime), nl.
 
